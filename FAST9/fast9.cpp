@@ -7,6 +7,9 @@ using namespace cv;
 const unsigned char DARKER = 1;
 const unsigned char SIMILAR = 2;
 const unsigned char BRIGHTER = 3;
+const int RED = 2;
+const int GREEN = 1;
+const int BLUE = 0;
 const int MAX_CANDIDATE = 16;
 const int MAX_CONSECUTIVE = 9;
 const int MAX_ADJACENCY = 8;
@@ -33,37 +36,37 @@ void convertGrayScale()
 		Vec3b* pixel = img.ptr<Vec3b>(y);
 
 		for (int x = 0; x < img.cols; x++) {
-			r = pixel[x][2];
-			g = pixel[x][1];
-			b = pixel[x][0];
+			r = pixel[x][RED];
+			g = pixel[x][GREEN];
+			b = pixel[x][BLUE];
 
 			// 3 channel average
-			int avg = (((r + g + b) / 3) > 255) ? 255 : (r + g + b) / 3; 
-			pixel[x][2] = (unsigned char) avg;
-			pixel[x][1] = (unsigned char) avg;
-			pixel[x][0] = (unsigned char) avg;
+			int avg = (((r + g + b) / 3) > 0xff) ? 0xff : (r + g + b) / 3; 
+			pixel[x][RED] = (unsigned char) avg;
+			pixel[x][GREEN] = (unsigned char) avg;
+			pixel[x][BLUE] = (unsigned char) avg;
 		}
 	}
 }
 
 void getAdjacentSixteenPixels(unsigned char* candidate, int y, int x)
 {
-	candidate[0] = img.at<Vec3b>(y - 3, x)[0];
-	candidate[1] = img.at<Vec3b>(y - 3, x + 1)[0];
-	candidate[2] = img.at<Vec3b>(y - 2, x + 2)[0];
-	candidate[3] = img.at<Vec3b>(y - 1, x + 3)[0];
-	candidate[4] = img.at<Vec3b>(y, x + 3)[0];
-	candidate[5] = img.at<Vec3b>(y + 1, x + 3)[0];
-	candidate[6] = img.at<Vec3b>(y + 2, x + 2)[0];
-	candidate[7] = img.at<Vec3b>(y + 3, x + 1)[0];
-	candidate[8] = img.at<Vec3b>(y + 3, x)[0];
-	candidate[9] = img.at<Vec3b>(y + 3, x - 1)[0];
-	candidate[10] = img.at<Vec3b>(y + 2, x - 2)[0];
-	candidate[11] = img.at<Vec3b>(y + 1, x - 3)[0];
-	candidate[12] = img.at<Vec3b>(y, x - 3)[0];
-	candidate[13] = img.at<Vec3b>(y - 1, x - 3)[0];
-	candidate[14] = img.at<Vec3b>(y - 2, x - 2)[0];
-	candidate[15] = img.at<Vec3b>(y - 3, x - 1)[0];
+	candidate[0] = img.at<Vec3b>(y - 3, x)[BLUE];
+	candidate[1] = img.at<Vec3b>(y - 3, x + 1)[BLUE];
+	candidate[2] = img.at<Vec3b>(y - 2, x + 2)[BLUE];
+	candidate[3] = img.at<Vec3b>(y - 1, x + 3)[BLUE];
+	candidate[4] = img.at<Vec3b>(y, x + 3)[BLUE];
+	candidate[5] = img.at<Vec3b>(y + 1, x + 3)[BLUE];
+	candidate[6] = img.at<Vec3b>(y + 2, x + 2)[BLUE];
+	candidate[7] = img.at<Vec3b>(y + 3, x + 1)[BLUE];
+	candidate[8] = img.at<Vec3b>(y + 3, x)[BLUE];
+	candidate[9] = img.at<Vec3b>(y + 3, x - 1)[BLUE];
+	candidate[10] = img.at<Vec3b>(y + 2, x - 2)[BLUE];
+	candidate[11] = img.at<Vec3b>(y + 1, x - 3)[BLUE];
+	candidate[12] = img.at<Vec3b>(y, x - 3)[BLUE];
+	candidate[13] = img.at<Vec3b>(y - 1, x - 3)[BLUE];
+	candidate[14] = img.at<Vec3b>(y - 2, x - 2)[BLUE];
+	candidate[15] = img.at<Vec3b>(y - 3, x - 1)[BLUE];
 }
 
 void getAdjacentEightPixels(unsigned char* adjacency, unsigned char (* corner)[MAX_COLS], int y, int x)
@@ -80,11 +83,11 @@ void getAdjacentEightPixels(unsigned char* adjacency, unsigned char (* corner)[M
 
 void comparePixel(unsigned char* compare, unsigned char* candidate, int y, int x, int threshold)
 {
-	int lower = (img.at<Vec3b>(y, x)[0] - threshold) < 0 ? 0 : (img.at<Vec3b>(y, x)[0] - threshold);
-	int upper = (img.at<Vec3b>(y, x)[0] + threshold) > 255 ? 255 : (img.at<Vec3b>(y, x)[0] + threshold);
+	int lower = (img.at<Vec3b>(y, x)[BLUE] - threshold) < 0 ? 0 : (img.at<Vec3b>(y, x)[BLUE] - threshold);
+	int upper = (img.at<Vec3b>(y, x)[BLUE] + threshold) > 0xff ? 0xff : (img.at<Vec3b>(y, x)[BLUE] + threshold);
 
 	for (int i = 0; i < MAX_CANDIDATE; i++)
-		compare[i] = (candidate[i] <= lower) ? 1 : (candidate[i] >= upper) ? 3 : 2;
+		compare[i] = (candidate[i] <= lower) ? DARKER : (candidate[i] >= upper) ? BRIGHTER : SIMILAR;
 }
 
 bool findNineConsecutivePixel(unsigned char* compare, int y, int x, bool allowPush)
@@ -144,7 +147,7 @@ void featureScore()
 		int max = 255;
 
 		while (min < max - 1) {
-			int avg = (((min + max) / 2) < 0) ? 0 : (((min + max) / 2) > 255) ? 255 : (min + max) / 2;
+			int avg = (((min + max) / 2) < 0) ? 0 : (((min + max) / 2) > 0xff) ? 0xff : (min + max) / 2;
 			comparePixel(compare, candidate, feature.y, feature.x, avg);
 
 			if (findNineConsecutivePixel(compare, feature.y, feature.x, false))
@@ -181,36 +184,33 @@ void nonMaximallySuppression()
 	
 	// Draw feature point
 	for (int i = 0; i < feature_candidate.size(); i++) {
-		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x][1] = 255;
+		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x][GREEN] = 0xff;
 	
-		img.ptr<Vec3b>(feature_candidate[i].y-1)[feature_candidate[i].x][1] = 255;
-		img.ptr<Vec3b>(feature_candidate[i].y+1)[feature_candidate[i].x][1] = 255;
-		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x-1][1] = 255;
-		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x+1][1] = 255;
+		img.ptr<Vec3b>(feature_candidate[i].y-1)[feature_candidate[i].x][GREEN] = 0xff;
+		img.ptr<Vec3b>(feature_candidate[i].y+1)[feature_candidate[i].x][GREEN] = 0xff;
+		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x-1][GREEN] = 0xff;
+		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x+1][GREEN] = 0xff;
 	}
 
 	for (int y = 0; y < img.rows; y++) {
 		for (int x = 0; x < img.cols; x++) {
 			if (corner[y][x] != 0) {
-				img.ptr<Vec3b>(y)[x][2] = 255;
-				img.ptr<Vec3b>(y)[x][1] = 0;
-				img.ptr<Vec3b>(y)[x][0] = 0;
+				img.ptr<Vec3b>(y)[x][RED] = 0xff;
+				img.ptr<Vec3b>(y)[x][GREEN] = 0;
+				img.ptr<Vec3b>(y)[x][BLUE] = 0;
 				
-				img.ptr<Vec3b>(y-1)[x][2] = 255;
-				img.ptr<Vec3b>(y-1)[x][1] = 0;
-				img.ptr<Vec3b>(y-1)[x][0] = 0;
-
-				img.ptr<Vec3b>(y+1)[x][2] = 255;
-				img.ptr<Vec3b>(y+1)[x][1] = 0;
-				img.ptr<Vec3b>(y+1)[x][0] = 0;
-
-				img.ptr<Vec3b>(y)[x-1][2] = 255;
-				img.ptr<Vec3b>(y)[x-1][1] = 0;
-				img.ptr<Vec3b>(y)[x-1][0] = 0;
-
-				img.ptr<Vec3b>(y)[x+1][2] = 255;
-				img.ptr<Vec3b>(y)[x+1][1] = 0;
-				img.ptr<Vec3b>(y)[x+1][0] = 0;
+				img.ptr<Vec3b>(y-1)[x][RED] = 0xff;
+				img.ptr<Vec3b>(y-1)[x][GREEN] = 0;
+				img.ptr<Vec3b>(y-1)[x][BLUE] = 0;
+				img.ptr<Vec3b>(y+1)[x][RED] = 0xff;
+				img.ptr<Vec3b>(y+1)[x][GREEN] = 0;
+				img.ptr<Vec3b>(y+1)[x][BLUE] = 0;
+				img.ptr<Vec3b>(y)[x-1][RED] = 0xff;
+				img.ptr<Vec3b>(y)[x-1][GREEN] = 0;
+				img.ptr<Vec3b>(y)[x-1][BLUE] = 0;
+				img.ptr<Vec3b>(y)[x+1][RED] = 0xff;
+				img.ptr<Vec3b>(y)[x+1][GREEN] = 0;
+				img.ptr<Vec3b>(y)[x+1][BLUE] = 0;
 			}
 		}
 	}
