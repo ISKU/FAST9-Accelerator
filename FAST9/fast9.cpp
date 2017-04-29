@@ -176,7 +176,7 @@ void nonMaximallySuppression()
 				getAdjacentEightPixels(adjacency, corner, y, x);
 
 				for (int i = 0; i < MAX_ADJACENCY; i++)
-					if (corner[y][x] < adjacency[i])
+					if (corner[y][x] <= adjacency[i])
 						corner[y][x] = 0;
 			}
 		}
