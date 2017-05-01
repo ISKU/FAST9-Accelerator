@@ -49,7 +49,7 @@ module FD_Top (clock, nReset, isCorner, refAddr, refPixel, adjPixel, thres);
 		.refPixel(refPixel),
 		.adjPixel(adjPixel),
 		.thres(thres),
-		.isCorner(isCorner),
+		.isCorner(isCorner)
 	);
 	
 endmodule 

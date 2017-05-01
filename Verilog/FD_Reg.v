@@ -8,7 +8,7 @@ module FD_Reg (clock, nReset, readen, regAddr, sramData, refPixel, adjPixel, thr
 	output [127:0] adjPixel;
 	output [5:0] thres;
 
-	reg [7:0] ref;
+	reg [7:0] refPoint;
 	reg [7:0] r1;
 	reg [7:0] r2;
 	reg [7:0] r3;
@@ -26,31 +26,31 @@ module FD_Reg (clock, nReset, readen, regAddr, sramData, refPixel, adjPixel, thr
 	reg [7:0] r15;
 	reg [7:0] r16;
 	
-	wire [16:0] decoder
+	wire [16:0] decoder;
 	assign decoder =
-		(regAddr == 4'd0) ? 17'd1 :
-		(regAddr == 4'd1) ? 17'd2 :
-		(regAddr == 4'd2) ? 17'd4 :
-		(regAddr == 4'd3) ? 17'd8 :
-		(regAddr == 4'd4) ? 17'd16 :
-		(regAddr == 4'd5) ? 17'd32 :
-		(regAddr == 4'd6) ? 17'd64 :
-		(regAddr == 4'd7) ? 17'd128 :
-		(regAddr == 4'd8) ? 17'd256 :
-		(regAddr == 4'd9) ? 17'd512 :
-		(regAddr == 4'd10) ? 17'd1024 :
-		(regAddr == 4'd11) ? 17'd2048 :
-		(regAddr == 4'd12) ? 17'd4096 :
-		(regAddr == 4'd13) ? 17'd8192 :
-		(regAddr == 4'd14) ? 17'd16384 :
-		(regAddr == 4'd15) ? 17'd32768 :
-		(regAddr == 4'd16) ? 17'd32768 : 17'bx;
+		(regAddr == 5'd0) ? 17'd1 :
+		(regAddr == 5'd1) ? 17'd2 :
+		(regAddr == 5'd2) ? 17'd4 :
+		(regAddr == 5'd3) ? 17'd8 :
+		(regAddr == 5'd4) ? 17'd16 :
+		(regAddr == 5'd5) ? 17'd32 :
+		(regAddr == 5'd6) ? 17'd64 :
+		(regAddr == 5'd7) ? 17'd128 :
+		(regAddr == 5'd8) ? 17'd256 :
+		(regAddr == 5'd9) ? 17'd512 :
+		(regAddr == 5'd10) ? 17'd1024 :
+		(regAddr == 5'd11) ? 17'd2048 :
+		(regAddr == 5'd12) ? 17'd4096 :
+		(regAddr == 5'd13) ? 17'd8192 :
+		(regAddr == 5'd14) ? 17'd16384 :
+		(regAddr == 5'd15) ? 17'd32768 :
+		(regAddr == 5'd16) ? 17'd32768 : 17'bx;
 		
 	always @ (posedge clock or negedge nReset)
 		if (!nReset)
-			ref <= 8'b0;
+			refPoint <= 8'b0;
 		else if (decoder[0])
-			ref <= sramData;
+			refPoint <= sramData;
 			
 	always @ (posedge clock or negedge nReset)
 		if (!nReset)
@@ -148,7 +148,7 @@ module FD_Reg (clock, nReset, readen, regAddr, sramData, refPixel, adjPixel, thr
 		else if (decoder[16])
 			r16 <= sramData;
 			
-	assign refPixel = (readen) ? ref : 8'bx;
+	assign refPixel = (readen) ? refPoint : 8'bx;
 	assign adjPixel = (readen) ? {r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15} : 128'bx;
 	assign thres = (readen) ? 5'd30 : 5'bx;
 endmodule 

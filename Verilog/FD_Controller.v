@@ -26,37 +26,41 @@ module FD_Controller (clock, nReset, refAddr, regAddr, readen);
 	output [4:0] regAddr;
 	output readen;
 	
+	reg [14:0] refAddr;
+	reg [4:0] regAddr;
+	reg [4:0] readen;
+	
 	reg [4:0] curState, nextState;
 	reg [14:0] rowCount;
 	
 	always @(posedge clock or negedge nReset) begin
 		if (!nReset) begin
 			curState <= `S0;
-			refAddr <= 3 * `COLUMNS + 3;
-			regAddr <= 5'b0;
+			assign refAddr = 3 * `COLUMNS + 3;
+			assign regAddr = 5'b0;
 			rowCount <= 1'b1;
 		end
 		else
 			curState <= nextState;
 	end
 	
-	always @ (curState) begin
-		casex (curState) begin
+	always @ (curState)
+		casex (curState)
 			`S0: begin
 				nextState = `S1;
 				regAddr = `S0;
-				readen = 1b'0;
+				readen = 1'b0;
 				
 				if (refAddr == 14'd21600)
-					refAddr <= 1;
+					refAddr = 1;
 				else if (rowCount % `COLUMNS == 0)
-					refAddr <= refAddr + 3;
+					refAddr = refAddr + 3;
 				else
-					refAddr <= refAddr + 1;
+					refAddr = refAddr + 1;
 			end
 			
 			`S1: begin
-				nextState <= `S2;
+				nextState = `S2;
 				regAddr = `S1;
 			end
 			
@@ -135,6 +139,5 @@ module FD_Controller (clock, nReset, refAddr, regAddr, readen);
 				regAddr = `S16;
 				readen = 1'b1;
 			end
-		end
-	end
+		endcase
 endmodule 
