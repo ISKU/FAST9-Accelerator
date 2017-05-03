@@ -1,3 +1,4 @@
+`define INIT 5'd20
 `define S0 5'd0
 `define S1 5'd1
 `define S2 5'd2
@@ -16,128 +17,164 @@
 `define S15 5'd15
 `define S16 5'd16
 `define S17 5'd17
-`define COLUMNS 4'd180
-`define ROWS 4'd120
+`define S18 5'd18
+`define COLUMNS 8'd180
+`define ROWS 8'd120
 
-module FD_Controller (clock, nReset, refAddr, regAddr, readen);
+module FD_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 	input clock;
 	input nReset;
 	output [14:0] refAddr;
+	output [4:0] adjNumber;
 	output [4:0] regAddr;
 	output readen;
 	
+	reg [4:0] adjNumber;
 	reg [14:0] refAddr;
 	reg [4:0] regAddr;
-	reg [4:0] readen;
+	reg readen;
 	
 	reg [4:0] curState, nextState;
-	reg [14:0] rowCount;
 	
 	always @(posedge clock or negedge nReset) begin
-		if (!nReset) begin
-			curState <= `S0;
-			assign refAddr = 3 * `COLUMNS + 3;
-			assign regAddr = 5'b0;
-			rowCount <= 1'b1;
-		end
+		if (!nReset)
+			curState <= `INIT;
 		else
 			curState <= nextState;
 	end
 	
-	always @ (curState)
+	always @(curState) begin
 		casex (curState)
+			`INIT: begin
+				nextState = `S0;
+				adjNumber = 5'bx;
+				regAddr = 5'bx;
+				readen = 1'b1;
+				
+				if (refAddr == 15'd21056)
+					refAddr = 15'd543;
+				else if (refAddr % 177 == 0)
+					refAddr = refAddr + 7;
+				else if (refAddr != 0)
+					refAddr = refAddr + 1;
+				else
+					refAddr = 15'd543;
+			end
+		
 			`S0: begin
 				nextState = `S1;
-				regAddr = `S0;
+				adjNumber = `S0;
+				regAddr = 5'bx;
 				readen = 1'b0;
-				
-				if (refAddr == 14'd21600)
-					refAddr = 1;
-				else if (rowCount % `COLUMNS == 0)
-					refAddr = refAddr + 3;
-				else
-					refAddr = refAddr + 1;
 			end
 			
 			`S1: begin
 				nextState = `S2;
-				regAddr = `S1;
+				adjNumber = `S1;
+				regAddr = 5'bx;
 			end
 			
 			`S2: begin
 				nextState = `S3;
-				regAddr = `S2;
+				adjNumber = `S2;
+				regAddr = `S0;
 			end
 			
 			`S3: begin
 				nextState = `S4;
-				regAddr = `S3;
+				adjNumber = `S3;
+				regAddr = `S1;
 			end
 			
 			`S4: begin
 				nextState = `S5;
-				regAddr = `S4;
+				adjNumber = `S4;				
+				regAddr = `S2;
 			end
 			
 			`S5: begin
 				nextState = `S6;
-				regAddr = `S5;
+				adjNumber = `S5;
+				regAddr = `S3;
 			end
 			
 			`S6: begin
 				nextState = `S7;
-				regAddr = `S6;
+				adjNumber = `S6;
+				regAddr = `S4;
 			end
 			
 			`S7: begin
 				nextState = `S8;
-				regAddr = `S7;
+				adjNumber = `S7;
+				regAddr = `S5;
 			end
 			
 			`S8: begin
 				nextState = `S9;
-				regAddr = `S8;
+				adjNumber = `S8;
+				regAddr = `S6;
 			end
 			
 			`S9: begin
 				nextState = `S10;
-				regAddr = `S9;
+				adjNumber = `S9;
+				regAddr = `S7;
 			end
 
 			`S10: begin
 				nextState = `S11;
-				regAddr = `S10;
+				adjNumber = `S10;
+				regAddr = `S8;
 			end
 			
 			`S11: begin
 				nextState = `S12;
-				regAddr = `S11;
+				adjNumber = `S11;
+				regAddr = `S9;
 			end
 			
 			`S12: begin
 				nextState = `S13;
-				regAddr = `S12;
+				adjNumber = `S12;
+				regAddr = `S10;
 			end
 			
 			`S13: begin
 				nextState = `S14;
-				regAddr = `S13;
+				adjNumber = `S13;
+				regAddr = `S11;
 			end
 			
 			`S14: begin
 				nextState = `S15;
-				regAddr = `S14;
+				adjNumber = `S14;
+				regAddr = `S12;
 			end
 			
 			`S15: begin
 				nextState = `S16;
-				regAddr = `S15;
+				adjNumber = `S15;
+				regAddr = `S13;
 			end
 			
 			`S16: begin
-				nextState = `S0;
+				nextState = `S17;
+				adjNumber = `S16;
+				regAddr = `S14;
+			end
+			
+			`S17: begin
+				nextState = `S18;
+				adjNumber = 5'bx;
+				regAddr = `S15;
+			end
+			
+			`S18: begin
+				nextState = `INIT;
+				adjNumber = 5'bx;
 				regAddr = `S16;
-				readen = 1'b1;
 			end
 		endcase
+	end
 endmodule 

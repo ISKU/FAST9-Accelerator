@@ -5,9 +5,10 @@ module FD_Top (clock, nReset, isCorner, refAddr, refPixel, adjPixel, thres);
 	output [14:0] refAddr;
 	output [7:0] refPixel;
 	output [127:0] adjPixel;
-	output [5:0] thres;
+	output [7:0] thres;
 	
 	wire readen;
+	wire [4:0] adjNumber;
 	wire [4:0] regAddr;
 	wire [14:0] sramAddr;
 	wire [7:0] sramData;
@@ -16,13 +17,14 @@ module FD_Top (clock, nReset, isCorner, refAddr, refPixel, adjPixel, thres);
 		.clock(clock),
 		.nReset(nReset),
 		.refAddr(refAddr),
+		.adjNumber(adjNumber),
 		.regAddr(regAddr),
-		.readen(readen),
+		.readen(readen)
 	);
 	
-	FD_Datapath addrCal(
+	FD_AddrCal addrCal(
 		.refAddr(refAddr),
-		.adjNumber(regAddr),
+		.adjNumber(adjNumber),
 		.sramAddr(sramAddr)
 	);
 

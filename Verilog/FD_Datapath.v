@@ -1,32 +1,32 @@
 module FD_Datapath(refPixel, adjPixel, thres, isCorner);
 	input [7:0] refPixel;
 	input [127:0] adjPixel;
-	input [5:0] thres;
+	input [7:0] thres;
 	output isCorner;
 	
-	wire [7:0] lower;
-	wire [7:0] upper;
+	wire [8:0] lower;
+	wire [8:0] upper;
 	wire [31:0] compare;
 	
-	assign lower = refPixel - thres;
-	assign upper = refPixel + thres;
+	assign lower = ((refPixel - thres) > 255) ? 8'd0 : (refPixel - thres);
+	assign upper = ((refPixel + thres) > 255) ? 8'd255 : (refPixel + thres);
 	
-	assign compare[1:0] = (adjPixel[127:120] <= lower) ? 2'b01 : (adjPixel[127:120] >= upper) ? 2'b10 : 2'b00;
-	assign compare[3:2] = (adjPixel[119:112] <= lower) ? 2'b01 : (adjPixel[119:112] >= upper) ? 2'b10 : 2'b00;
-	assign compare[5:4] = (adjPixel[111:104] <= lower) ? 2'b01 : (adjPixel[111:104] >= upper) ? 2'b10 : 2'b00;
-	assign compare[7:6] = (adjPixel[103:96] <= lower) ? 2'b01 : (adjPixel[103:96] >= upper) ? 2'b10 : 2'b00;
-	assign compare[9:8] = (adjPixel[95:88] <= lower) ? 2'b01 : (adjPixel[95:88] >= upper) ? 2'b10 : 2'b00;
-	assign compare[11:10] = (adjPixel[87:80] <= lower) ? 2'b01 : (adjPixel[87:80] >= upper) ? 2'b10 : 2'b00;
-	assign compare[13:12] = (adjPixel[79:72] <= lower) ? 2'b01 : (adjPixel[79:72] >= upper) ? 2'b10 : 2'b00;
-	assign compare[15:14] = (adjPixel[71:64] <= lower) ? 2'b01 : (adjPixel[71:64] >= upper) ? 2'b10 : 2'b00;
-	assign compare[17:16] = (adjPixel[63:56] <= lower) ? 2'b01 : (adjPixel[63:56] >= upper) ? 2'b10 : 2'b00;
-	assign compare[19:18] = (adjPixel[55:48] <= lower) ? 2'b01 : (adjPixel[55:48] >= upper) ? 2'b10 : 2'b00;
-	assign compare[21:20] = (adjPixel[47:40] <= lower) ? 2'b01 : (adjPixel[47:40] >= upper) ? 2'b10 : 2'b00;
-	assign compare[23:22] = (adjPixel[39:32] <= lower) ? 2'b01 : (adjPixel[39:32] >= upper) ? 2'b10 : 2'b00;
-	assign compare[25:24] = (adjPixel[31:24] <= lower) ? 2'b01 : (adjPixel[31:24] >= upper) ? 2'b10 : 2'b00;
-	assign compare[27:26] = (adjPixel[23:16] <= lower) ? 2'b01 : (adjPixel[23:16] >= upper) ? 2'b10 : 2'b00;
-	assign compare[29:28] = (adjPixel[15:8] <= lower) ? 2'b01 : (adjPixel[15:8] >= upper) ? 2'b10 : 2'b00;
-	assign compare[31:30] = (adjPixel[7:0] <= lower) ? 2'b01 : (adjPixel[7:0] >= upper) ? 2'b10 : 2'b00;
+	assign compare[1:0] = ({1'b0, adjPixel[127:120]} < lower) ? 2'b01 : ({1'b0, adjPixel[127:120]} > upper) ? 2'b10 : 2'b00;
+	assign compare[3:2] = ({1'b0, adjPixel[119:112]} < lower) ? 2'b01 : ({1'b0, adjPixel[119:112]} > upper) ? 2'b10 : 2'b00;
+	assign compare[5:4] = ({1'b0, adjPixel[111:104]} < lower) ? 2'b01 : ({1'b0, adjPixel[111:104]} > upper) ? 2'b10 : 2'b00;
+	assign compare[7:6] = ({1'b0, adjPixel[103:96]} < lower) ? 2'b01 : ({1'b0, adjPixel[103:96]} > upper) ? 2'b10 : 2'b00;
+	assign compare[9:8] = ({1'b0, adjPixel[95:88]} < lower) ? 2'b01 : ({1'b0, adjPixel[95:88]} > upper) ? 2'b10 : 2'b00;
+	assign compare[11:10] = ({1'b0, adjPixel[87:80]} < lower) ? 2'b01 : ({1'b0, adjPixel[87:80]} > upper) ? 2'b10 : 2'b00;
+	assign compare[13:12] = ({1'b0, adjPixel[79:72]} < lower) ? 2'b01 : ({1'b0, adjPixel[79:72]} > upper) ? 2'b10 : 2'b00;
+	assign compare[15:14] = ({1'b0, adjPixel[71:64]} < lower) ? 2'b01 : ({1'b0, adjPixel[71:64]} > upper) ? 2'b10 : 2'b00;
+	assign compare[17:16] = ({1'b0, adjPixel[63:56]} < lower) ? 2'b01 : ({1'b0, adjPixel[63:56]} > upper) ? 2'b10 : 2'b00;
+	assign compare[19:18] = ({1'b0, adjPixel[55:48]} < lower) ? 2'b01 : ({1'b0, adjPixel[55:48]} > upper) ? 2'b10 : 2'b00;
+	assign compare[21:20] = ({1'b0, adjPixel[47:40]} < lower) ? 2'b01 : ({1'b0, adjPixel[47:40]} > upper) ? 2'b10 : 2'b00;
+	assign compare[23:22] = ({1'b0, adjPixel[39:32]} < lower) ? 2'b01 : ({1'b0, adjPixel[39:32]} > upper) ? 2'b10 : 2'b00;
+	assign compare[25:24] = ({1'b0, adjPixel[31:24]} < lower) ? 2'b01 : ({1'b0, adjPixel[31:24]} > upper) ? 2'b10 : 2'b00;
+	assign compare[27:26] = ({1'b0, adjPixel[23:16]} < lower) ? 2'b01 : ({1'b0, adjPixel[23:16]} > upper) ? 2'b10 : 2'b00;
+	assign compare[29:28] = ({1'b0, adjPixel[15:8]} < lower) ? 2'b01 : ({1'b0, adjPixel[15:8]} > upper) ? 2'b10 : 2'b00;
+	assign compare[31:30] = ({1'b0, adjPixel[7:0]} < lower) ? 2'b01 : ({1'b0, adjPixel[7:0]} > upper) ? 2'b10 : 2'b00;
 	
 	assign isCorner =
 		(compare[31:14] == 18'h15555) ? 1'b1 :

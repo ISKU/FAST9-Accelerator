@@ -6,7 +6,7 @@ module Testbench_SramTest;
 	wire [7:0] read;
 	
 	always begin
-		#2 clock = ~clock;
+		#50 clock = ~clock;
 		$display($time, "%d : %b : %h", read, read, read);
 	end
 		
