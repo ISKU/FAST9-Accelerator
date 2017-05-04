@@ -1,31 +1,17 @@
 module FD_Reg (clock, nReset, readen, regAddr, sramData, refPixel, adjPixel, thres);
 	input clock;
 	input nReset;
-	input readen;
-	input [4:0] regAddr;
-	input [7:0] sramData;
-	output [7:0] refPixel;
-	output [127:0] adjPixel;
-	output [7:0] thres;
+	input readen; // Datapath에 input으로 값을 주기 위한 신호
+	input [4:0] regAddr; // 레지스터 주소
+	input [7:0] sramData; // 레지스터에 저장할 값
+	output [7:0] refPixel; // 기준점 데이터 
+	output [127:0] adjPixel; // 인접한 16개의 점 데이터
+	output [7:0] thres; // 임계값
 
-	reg [7:0] refPoint;
-	reg [7:0] r1;
-	reg [7:0] r2;
-	reg [7:0] r3;
-	reg [7:0] r4;
-	reg [7:0] r5;
-	reg [7:0] r6;
-	reg [7:0] r7;
-	reg [7:0] r8;
-	reg [7:0] r9;
-	reg [7:0] r10;
-	reg [7:0] r11;
-	reg [7:0] r12;
-	reg [7:0] r13;
-	reg [7:0] r14;
-	reg [7:0] r15;
-	reg [7:0] r16;
+	reg [7:0] refPoint; // 기준점 데이터를 저장
+	reg [7:0] r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16; // 인접한 16개 점의 데이터를 저장
 	
+	// 주소로부터 저장할 레지스터를 선택하기 위한 디코더로 기준점의 데이터와, 인접한 16개의 점의 데이터를 저장한다.
 	wire [16:0] decoder;
 	assign decoder =
 		(regAddr == 5'd0) ? 17'd1 :
@@ -45,7 +31,7 @@ module FD_Reg (clock, nReset, readen, regAddr, sramData, refPixel, adjPixel, thr
 		(regAddr == 5'd14) ? 17'd16384 :
 		(regAddr == 5'd15) ? 17'd32768 :
 		(regAddr == 5'd16) ? 17'd65536 : 17'bx;
-		
+	
 	always @ (posedge clock or negedge nReset)
 		if (!nReset)
 			refPoint <= 8'bx;
@@ -147,8 +133,9 @@ module FD_Reg (clock, nReset, readen, regAddr, sramData, refPixel, adjPixel, thr
 			r16 <= 8'bx;
 		else if (decoder[16])
 			r16 <= sramData;
-			
-	assign refPixel = (readen) ? refPoint : 8'bx;
-	assign adjPixel = (readen) ? {r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16} : 128'bx;
-	assign thres = (readen) ? 8'd30 : 8'bx;
+	
+	// readen이 1로 셋팅 되면 기준점 데이터와, 16개의 인접한 점의 데이터를 한번에 Output으로 보낸다.
+	assign refPixel = (readen) ? refPoint : 8'bx; // 기준점 
+	assign adjPixel = (readen) ? {r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16} : 128'bx; // 16개 점
+	assign thres = (readen) ? 8'd30 : 8'bx; // 임게값
 endmodule 

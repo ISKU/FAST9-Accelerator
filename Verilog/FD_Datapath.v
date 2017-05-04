@@ -1,16 +1,17 @@
 module FD_Datapath(refPixel, adjPixel, thres, isCorner);
-	input [7:0] refPixel;
-	input [127:0] adjPixel;
-	input [7:0] thres;
-	output isCorner;
+	input [7:0] refPixel; // 기준점 데이터
+	input [127:0] adjPixel; // 16개의 점 데이터
+	input [7:0] thres; // 임계값
+	output isCorner; // 코너 확인
 	
-	wire [8:0] lower;
-	wire [8:0] upper;
-	wire [31:0] compare;
+	wire [8:0] lower; // 기준점 - 임계값 
+	wire [8:0] upper; // 기준점 + 임계값 
+	wire [31:0] compare; // 16개의 점에 대해서 각각 DARK, BRIGHT, SIMILAR를 저장
 	
-	assign lower = ((refPixel - thres) > 255) ? 8'd0 : (refPixel - thres);
-	assign upper = ((refPixel + thres) > 255) ? 8'd255 : (refPixel + thres);
+	assign lower = ((refPixel - thres) > 255) ? 8'd0 : (refPixel - thres); // 하한
+	assign upper = ((refPixel + thres) > 255) ? 8'd255 : (refPixel + thres); // 상한 
 	
+	// 01 = DARK, 10 = BRIGHT, 00 = SIMILAR
 	assign compare[1:0] = ({1'b0, adjPixel[127:120]} < lower) ? 2'b01 : ({1'b0, adjPixel[127:120]} > upper) ? 2'b10 : 2'b00;
 	assign compare[3:2] = ({1'b0, adjPixel[119:112]} < lower) ? 2'b01 : ({1'b0, adjPixel[119:112]} > upper) ? 2'b10 : 2'b00;
 	assign compare[5:4] = ({1'b0, adjPixel[111:104]} < lower) ? 2'b01 : ({1'b0, adjPixel[111:104]} > upper) ? 2'b10 : 2'b00;
@@ -28,6 +29,7 @@ module FD_Datapath(refPixel, adjPixel, thres, isCorner);
 	assign compare[29:28] = ({1'b0, adjPixel[15:8]} < lower) ? 2'b01 : ({1'b0, adjPixel[15:8]} > upper) ? 2'b10 : 2'b00;
 	assign compare[31:30] = ({1'b0, adjPixel[7:0]} < lower) ? 2'b01 : ({1'b0, adjPixel[7:0]} > upper) ? 2'b10 : 2'b00;
 	
+	// 9개의 연속한 점이 DARK 또는 BRIGHT인 모든 경우의 수를 비교하여 코너 확인
 	assign isCorner =
 		(compare[31:14] == 18'h15555) ? 1'b1 :
 		(compare[31:14] == 18'h2AAAA) ? 1'b1 :
@@ -45,20 +47,20 @@ module FD_Datapath(refPixel, adjPixel, thres, isCorner);
 		(compare[19:2] == 18'h2AAAA) ? 1'b1 :
 		(compare[17:0] == 18'h15555) ? 1'b1 :
 		(compare[17:0] == 18'h2AAAA) ? 1'b1 :
-		(compare[31:0] == 32'b 10xxxxxxxxxxxxxx1010101010101010 ) ? 1'b1 :
-		(compare[31:0] == 32'b 01xxxxxxxxxxxxxx0101010101010101 ) ? 1'b1 :
-		(compare[31:0] == 32'b 1010xxxxxxxxxxxxxx10101010101010 ) ? 1'b1 :
-		(compare[31:0] == 32'b 0101xxxxxxxxxxxxxx01010101010101 ) ? 1'b1 :
-		(compare[31:0] == 32'b 101010xxxxxxxxxxxxxx101010101010 ) ? 1'b1 :
-		(compare[31:0] == 32'b 010101xxxxxxxxxxxxxx010101010101 ) ? 1'b1 :
-		(compare[31:0] == 32'b 10101010xxxxxxxxxxxxxx1010101010 ) ? 1'b1 :
-		(compare[31:0] == 32'b 01010101xxxxxxxxxxxxxx0101010101 ) ? 1'b1 :
-		(compare[31:0] == 32'b 1010101010xxxxxxxxxxxxxx10101010 ) ? 1'b1 :
-		(compare[31:0] == 32'b 0101010101xxxxxxxxxxxxxx01010101 ) ? 1'b1 :
-		(compare[31:0] == 32'b 101010101010xxxxxxxxxxxxxx101010 ) ? 1'b1 :
-		(compare[31:0] == 32'b 010101010101xxxxxxxxxxxxxx010101 ) ? 1'b1 :
-		(compare[31:0] == 32'b 10101010101010xxxxxxxxxxxxxx1010 ) ? 1'b1 :
-		(compare[31:0] == 32'b 01010101010101xxxxxxxxxxxxxx0101 ) ? 1'b1 :
-		(compare[31:0] == 32'b 1010101010101010xxxxxxxxxxxxxx10 ) ? 1'b1 :
-		(compare[31:0] == 32'b 0101010101010101xxxxxxxxxxxxxx01 ) ? 1'b1 : 1'b0;
+		((compare[31:30] == 2'b10) && (compare[15:0] == 16'hAAAA)) ? 1'b1 :
+		((compare[31:30] == 2'b01) && (compare[15:0] == 16'h5555)) ? 1'b1 :
+		((compare[31:28] == 4'hA) && (compare[13:0] == 14'h2AAA)) ? 1'b1 :
+		((compare[31:28] == 4'h5) && (compare[13:0] == 14'h1555)) ? 1'b1 :
+		((compare[31:26] == 6'h2A) && (compare[11:0] == 12'hAAA)) ? 1'b1 :
+		((compare[31:26] == 6'h15) && (compare[11:0] == 12'h555)) ? 1'b1 :
+		((compare[31:24] == 8'hAA) && (compare[9:0] == 10'h2AA)) ? 1'b1 :
+		((compare[31:24] == 8'h55) && (compare[9:0] == 10'h155)) ? 1'b1 :
+		((compare[31:22] == 10'h2AA) && (compare[7:0] == 8'hAA)) ? 1'b1 :
+		((compare[31:22] == 10'h155) && (compare[7:0] == 8'h55)) ? 1'b1 :
+		((compare[31:20] == 12'hAAA) && (compare[5:0] == 6'h2A)) ? 1'b1 :
+		((compare[31:20] == 12'h555) && (compare[5:0] == 6'h15)) ? 1'b1 :
+		((compare[31:18] == 14'h2AAA) && (compare[3:0] == 4'hA)) ? 1'b1 :
+		((compare[31:18] == 14'h1555) && (compare[3:0] == 4'h5)) ? 1'b1 :
+		((compare[31:16] == 16'hAAAA) && (compare[1:0] == 2'b10)) ? 1'b1 :
+		((compare[31:16] == 16'h5555) && (compare[1:0] == 2'b01)) ? 1'b1 : 1'b0;
 endmodule 

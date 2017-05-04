@@ -18,8 +18,6 @@
 `define S16 5'd16
 `define S17 5'd17
 `define S18 5'd18
-`define COLUMNS 8'd180
-`define ROWS 8'd120
 
 module FD_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 	input clock;
@@ -29,13 +27,14 @@ module FD_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 	output [4:0] regAddr;
 	output readen;
 	
-	reg [4:0] adjNumber;
-	reg [14:0] refAddr;
-	reg [4:0] regAddr;
-	reg readen;
+	reg [14:0] refAddr; // 기준점 주소
+	reg [4:0] adjNumber; // 16개의 점 Index
+	reg [4:0] regAddr; // 레지스터 주소
+	reg readen; // Datapath가 수행될 수 있도록 하는 enable 신호
 	
-	reg [4:0] curState, nextState;
+	reg [4:0] curState, nextState; // 상태 변화
 	
+	// 클락이 상승할 때마다 현재 상태에서 다음상태로 변화
 	always @(posedge clock or negedge nReset) begin
 		if (!nReset)
 			curState <= `INIT;
@@ -43,6 +42,7 @@ module FD_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 			curState <= nextState;
 	end
 	
+	// FSM
 	always @(curState) begin
 		casex (curState)
 			`INIT: begin
