@@ -137,7 +137,11 @@ void featureDetection()
 	/* This below is debug code
 	ofstream outFile("FeatureDetection_Output.txt");
 	for (int i = 0; i < feature_candidate.size(); i++)
-		outFile << dec << "y: " << feature_candidate[i].y << ", x: " << feature_candidate[i].x << ", addr: " << (feature_candidate[i].y * 180 + feature_candidate[i].x) << ", data: " << hex << (int) (img.at<Vec3b>(feature_candidate[i].y, feature_candidate[i].x)[BLUE]) << " " << endl;
+		outFile << dec 
+		<< "y: " << feature_candidate[i].y 
+		<< ", x: " << feature_candidate[i].x 
+		<< ", addr: " << (feature_candidate[i].y * 180 + feature_candidate[i].x) 
+		<< ", data: " << hex << (int) (img.at<Vec3b>(feature_candidate[i].y, feature_candidate[i].x)[BLUE]) << " " << endl;
 	outFile.close();
 	*/
 }
