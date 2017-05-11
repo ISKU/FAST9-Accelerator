@@ -1,34 +1,38 @@
-module FD_Datapath(refPixel, adjPixel, thres, isCorner);
+`define SIMILAR 2'b00
+`define DARK 2'b01
+`define BRIGHT 2'b10
+
+module FD_Datapath (refPixel, adjPixel, thres, isCorner, compare);
 	input [7:0] refPixel; // 기준점 데이터
 	input [127:0] adjPixel; // 16개의 점 데이터
 	input [7:0] thres; // 임계값
 	output isCorner; // 코너 확인
-	
+	output [31:0] compare; // 16개의 점에 대해서 각각 DARK, BRIGHT, SIMILAR를 저장
+
 	wire [8:0] lower; // 기준점 - 임계값 
 	wire [8:0] upper; // 기준점 + 임계값 
-	wire [31:0] compare; // 16개의 점에 대해서 각각 DARK, BRIGHT, SIMILAR를 저장
 	
 	assign lower = ((refPixel - thres) > 255) ? 8'd0 : (refPixel - thres); // 하한
 	assign upper = ((refPixel + thres) > 255) ? 8'd255 : (refPixel + thres); // 상한 
 	
 	// 01 = DARK, 10 = BRIGHT, 00 = SIMILAR
-	assign compare[1:0] = ({1'b0, adjPixel[127:120]} < lower) ? 2'b01 : ({1'b0, adjPixel[127:120]} > upper) ? 2'b10 : 2'b00;
-	assign compare[3:2] = ({1'b0, adjPixel[119:112]} < lower) ? 2'b01 : ({1'b0, adjPixel[119:112]} > upper) ? 2'b10 : 2'b00;
-	assign compare[5:4] = ({1'b0, adjPixel[111:104]} < lower) ? 2'b01 : ({1'b0, adjPixel[111:104]} > upper) ? 2'b10 : 2'b00;
-	assign compare[7:6] = ({1'b0, adjPixel[103:96]} < lower) ? 2'b01 : ({1'b0, adjPixel[103:96]} > upper) ? 2'b10 : 2'b00;
-	assign compare[9:8] = ({1'b0, adjPixel[95:88]} < lower) ? 2'b01 : ({1'b0, adjPixel[95:88]} > upper) ? 2'b10 : 2'b00;
-	assign compare[11:10] = ({1'b0, adjPixel[87:80]} < lower) ? 2'b01 : ({1'b0, adjPixel[87:80]} > upper) ? 2'b10 : 2'b00;
-	assign compare[13:12] = ({1'b0, adjPixel[79:72]} < lower) ? 2'b01 : ({1'b0, adjPixel[79:72]} > upper) ? 2'b10 : 2'b00;
-	assign compare[15:14] = ({1'b0, adjPixel[71:64]} < lower) ? 2'b01 : ({1'b0, adjPixel[71:64]} > upper) ? 2'b10 : 2'b00;
-	assign compare[17:16] = ({1'b0, adjPixel[63:56]} < lower) ? 2'b01 : ({1'b0, adjPixel[63:56]} > upper) ? 2'b10 : 2'b00;
-	assign compare[19:18] = ({1'b0, adjPixel[55:48]} < lower) ? 2'b01 : ({1'b0, adjPixel[55:48]} > upper) ? 2'b10 : 2'b00;
-	assign compare[21:20] = ({1'b0, adjPixel[47:40]} < lower) ? 2'b01 : ({1'b0, adjPixel[47:40]} > upper) ? 2'b10 : 2'b00;
-	assign compare[23:22] = ({1'b0, adjPixel[39:32]} < lower) ? 2'b01 : ({1'b0, adjPixel[39:32]} > upper) ? 2'b10 : 2'b00;
-	assign compare[25:24] = ({1'b0, adjPixel[31:24]} < lower) ? 2'b01 : ({1'b0, adjPixel[31:24]} > upper) ? 2'b10 : 2'b00;
-	assign compare[27:26] = ({1'b0, adjPixel[23:16]} < lower) ? 2'b01 : ({1'b0, adjPixel[23:16]} > upper) ? 2'b10 : 2'b00;
-	assign compare[29:28] = ({1'b0, adjPixel[15:8]} < lower) ? 2'b01 : ({1'b0, adjPixel[15:8]} > upper) ? 2'b10 : 2'b00;
-	assign compare[31:30] = ({1'b0, adjPixel[7:0]} < lower) ? 2'b01 : ({1'b0, adjPixel[7:0]} > upper) ? 2'b10 : 2'b00;
-	
+	assign compare[31:30] = ({1'b0, adjPixel[127:120]} < lower) ? `DARK : ({1'b0, adjPixel[127:120]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[29:28] = ({1'b0, adjPixel[119:112]} < lower) ? `DARK : ({1'b0, adjPixel[119:112]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[27:26] = ({1'b0, adjPixel[111:104]} < lower) ? `DARK : ({1'b0, adjPixel[111:104]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[25:24] = ({1'b0, adjPixel[103:96]} < lower) ? `DARK : ({1'b0, adjPixel[103:96]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[23:22] = ({1'b0, adjPixel[95:88]} < lower) ? `DARK : ({1'b0, adjPixel[95:88]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[21:20] = ({1'b0, adjPixel[87:80]} < lower) ? `DARK : ({1'b0, adjPixel[87:80]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[19:18] = ({1'b0, adjPixel[79:72]} < lower) ? `DARK : ({1'b0, adjPixel[79:72]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[17:16] = ({1'b0, adjPixel[71:64]} < lower) ? `DARK : ({1'b0, adjPixel[71:64]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[15:14] = ({1'b0, adjPixel[63:56]} < lower) ? `DARK : ({1'b0, adjPixel[63:56]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[13:12] = ({1'b0, adjPixel[55:48]} < lower) ? `DARK : ({1'b0, adjPixel[55:48]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[11:10] = ({1'b0, adjPixel[47:40]} < lower) ? `DARK : ({1'b0, adjPixel[47:40]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[9:8] = ({1'b0, adjPixel[39:32]} < lower) ? `DARK : ({1'b0, adjPixel[39:32]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[7:6] = ({1'b0, adjPixel[31:24]} < lower) ? `DARK : ({1'b0, adjPixel[31:24]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[5:4] = ({1'b0, adjPixel[23:16]} < lower) ? `DARK : ({1'b0, adjPixel[23:16]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[3:2] = ({1'b0, adjPixel[15:8]} < lower) ? `DARK : ({1'b0, adjPixel[15:8]} > upper) ? `BRIGHT : `SIMILAR;
+	assign compare[1:0] = ({1'b0, adjPixel[7:0]} < lower) ? `DARK : ({1'b0, adjPixel[7:0]} > upper) ? `BRIGHT : `SIMILAR;
+
 	// 9개의 연속한 점이 DARK 또는 BRIGHT인 모든 경우의 수를 비교하여 코너 확인
 	assign isCorner =
 		(compare[31:14] == 18'h15555) ? 1'b1 :

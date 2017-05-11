@@ -7,6 +7,7 @@ module FD_Testbench;
 	wire [7:0] refPixel; // 기준점 데이터
 	wire [127:0] adjPixel; // 인접한 16개의 점 데이터
 	wire [7:0] thres; // 임계값
+	wire [31:0] compare;
 	
 	always begin
 		#10 clock = ~clock;
@@ -22,7 +23,8 @@ module FD_Testbench;
 		.refAddr(refAddr),
 		.refPixel(refPixel),
 		.adjPixel(adjPixel),
-		.thres(thres)
+		.thres(thres),
+		.compare(compare)
 	);
 	
 	initial begin

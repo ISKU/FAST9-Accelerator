@@ -1,4 +1,4 @@
-module FD_Top (clock, nReset, isCorner, refAddr, refPixel, adjPixel, thres);
+module FD_Top (clock, nReset, isCorner, refAddr, refPixel, adjPixel, thres, compare);
 	input clock;
 	input nReset;
 	output isCorner; // Corner 확인
@@ -6,8 +6,8 @@ module FD_Top (clock, nReset, isCorner, refAddr, refPixel, adjPixel, thres);
 	output [7:0] refPixel; // 기준점 데이터
 	output [127:0] adjPixel; // 인접한 16개의 점 데이터
 	output [7:0] thres; // 임계값
+	output [31:0] compare;
 	
-	wire readen; // 읽기 신호
 	wire [4:0] adjNumber; // 1~16개의 인접한 점
 	wire [4:0] regAddr; // 레지스터 주소
 	wire [14:0] sramAddr; // SRAM 주소
@@ -56,6 +56,7 @@ module FD_Top (clock, nReset, isCorner, refAddr, refPixel, adjPixel, thres);
 		.refPixel(refPixel),
 		.adjPixel(adjPixel),
 		.thres(thres),
-		.isCorner(isCorner)
+		.isCorner(isCorner),
+		.compare(compare)
 	);
 endmodule 
