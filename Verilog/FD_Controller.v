@@ -18,6 +18,7 @@
 `define S16 5'd16
 `define S17 5'd17
 `define S18 5'd18
+`define S19 5'd19
 
 module FD_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 	input clock;
@@ -49,7 +50,7 @@ module FD_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 				nextState = `S0;
 				adjNumber = 5'bx;
 				regAddr = 5'bx;
-				readen = 1'b1;
+				readen = 1'b0;
 				
 				if (refAddr == 15'd21056)
 					refAddr = 15'd543;
@@ -65,7 +66,6 @@ module FD_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 				nextState = `S1;
 				adjNumber = `S0;
 				regAddr = 5'bx;
-				readen = 1'b0;
 			end
 			
 			`S1: begin
@@ -171,9 +171,16 @@ module FD_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 			end
 			
 			`S18: begin
-				nextState = `INIT;
+				nextState = `S19;
 				adjNumber = 5'bx;
 				regAddr = `S16;
+			end
+			
+			`S19: begin
+				nextState = `INIT;
+				adjNumber = 5'bx;
+				regAddr = 5'bx;
+				readen = 1'b1;
 			end
 		endcase
 	end
