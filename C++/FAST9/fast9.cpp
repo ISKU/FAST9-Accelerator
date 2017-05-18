@@ -172,7 +172,7 @@ void featureScore()
 		feature_candidate[index].score = max; // save feature score
 	}
 
-	// This below is debug code (Score decision using fomula)
+	/* This below is debug code (Score decision using fomula)
 	ofstream outFile("FeatureScore_Output.txt");
 	for (int index = 0; index < feature_candidate.size(); index++) {
 		FEATURE feature = feature_candidate[index];
@@ -196,6 +196,7 @@ void featureScore()
 		<< ", score: " << hex << (((setDark > setBright) ? setDark : setBright) & 0xff) << endl;
 	}
 	outFile.close();
+	*/
 }
 
 void oneFeatureScore()
@@ -247,10 +248,45 @@ void oneFeatureScore()
 	printf("score: %d\n", (setDark > setBright) ? setDark : setBright);
 }
 
+void drawCandidateFeaturePoint()
+{
+	for (int i = 0; i < feature_candidate.size(); i++) {
+		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x][GREEN] = 0xff;
+		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x][RED] = 0;
+		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x][BLUE] = 0;
+
+		img.ptr<Vec3b>(feature_candidate[i].y - 1)[feature_candidate[i].x][GREEN] = 0xff;
+		img.ptr<Vec3b>(feature_candidate[i].y + 1)[feature_candidate[i].x][GREEN] = 0xff;
+		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x - 1][GREEN] = 0xff;
+		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x + 1][GREEN] = 0xff;
+	}
+}
+
+void drawFeature(int y, int x)
+{
+	img.ptr<Vec3b>(y)[x][RED] = 0xff;
+	img.ptr<Vec3b>(y)[x][GREEN] = 0;
+	img.ptr<Vec3b>(y)[x][BLUE] = 0;
+	
+	img.ptr<Vec3b>(y - 1)[x][RED] = 0xff;
+	img.ptr<Vec3b>(y - 1)[x][GREEN] = 0;
+	img.ptr<Vec3b>(y - 1)[x][BLUE] = 0;
+	img.ptr<Vec3b>(y + 1)[x][RED] = 0xff;
+	img.ptr<Vec3b>(y + 1)[x][GREEN] = 0;
+	img.ptr<Vec3b>(y + 1)[x][BLUE] = 0;
+	img.ptr<Vec3b>(y)[x - 1][RED] = 0xff;
+	img.ptr<Vec3b>(y)[x - 1][GREEN] = 0;
+	img.ptr<Vec3b>(y)[x - 1][BLUE] = 0;
+	img.ptr<Vec3b>(y)[x + 1][RED] = 0xff;
+	img.ptr<Vec3b>(y)[x + 1][GREEN] = 0;
+	img.ptr<Vec3b>(y)[x + 1][BLUE] = 0;
+}
+
 void nonMaximallySuppression()
 {
 	unsigned char corner[MAX_ROWS][MAX_COLS] = {{0}};
 	unsigned char adjacency[MAX_ADJACENCY];
+	drawCandidateFeaturePoint();
 
 	// Set existing features to corner array
 	for (int i = 0; i < feature_candidate.size(); i++)
@@ -262,44 +298,15 @@ void nonMaximallySuppression()
 			if (corner[y][x] != 0) {
 				getAdjacentEightPixels(adjacency, corner, y, x);
 
+				bool check = false;
 				for (int i = 0; i < MAX_ADJACENCY; i++)
-					if (corner[y][x] <= adjacency[i])
-						corner[y][x] = 0;
-			}
-		}
-	}
-	
-	// Draw feature point
-	for (int i = 0; i < feature_candidate.size(); i++) {
-		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x][GREEN] = 0xff;
-		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x][RED] = 0;
-		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x][BLUE] = 0;
-	
-		img.ptr<Vec3b>(feature_candidate[i].y - 1)[feature_candidate[i].x][GREEN] = 0xff;
-		img.ptr<Vec3b>(feature_candidate[i].y + 1)[feature_candidate[i].x][GREEN] = 0xff;
-		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x - 1][GREEN] = 0xff;
-		img.ptr<Vec3b>(feature_candidate[i].y)[feature_candidate[i].x + 1][GREEN] = 0xff;
-	}
+					if (corner[y][x] <= adjacency[i]) {
+						check = true;
+						break;
+					}
 
-	for (int y = 0; y < img.rows; y++) {
-		for (int x = 0; x < img.cols; x++) {
-			if (corner[y][x] != 0) {
-				img.ptr<Vec3b>(y)[x][RED] = 0xff;
-				img.ptr<Vec3b>(y)[x][GREEN] = 0;
-				img.ptr<Vec3b>(y)[x][BLUE] = 0;
-				
-				img.ptr<Vec3b>(y - 1)[x][RED] = 0xff;
-				img.ptr<Vec3b>(y - 1)[x][GREEN] = 0;
-				img.ptr<Vec3b>(y - 1)[x][BLUE] = 0;
-				img.ptr<Vec3b>(y + 1)[x][RED] = 0xff;
-				img.ptr<Vec3b>(y + 1)[x][GREEN] = 0;
-				img.ptr<Vec3b>(y + 1)[x][BLUE] = 0;
-				img.ptr<Vec3b>(y)[x - 1][RED] = 0xff;
-				img.ptr<Vec3b>(y)[x - 1][GREEN] = 0;
-				img.ptr<Vec3b>(y)[x - 1][BLUE] = 0;
-				img.ptr<Vec3b>(y)[x + 1][RED] = 0xff;
-				img.ptr<Vec3b>(y)[x + 1][GREEN] = 0;
-				img.ptr<Vec3b>(y)[x + 1][BLUE] = 0;
+				if (check)
+					drawFeature(y, x);
 			}
 		}
 	}
