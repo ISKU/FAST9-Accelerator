@@ -298,10 +298,10 @@ void nonMaximallySuppression()
 			if (corner[y][x] != 0) {
 				getAdjacentEightPixels(adjacency, corner, y, x);
 
-				bool check = false;
+				bool check = true;
 				for (int i = 0; i < MAX_ADJACENCY; i++)
-					if (corner[y][x] <= adjacency[i]) {
-						check = true;
+					if (corner[y][x] < adjacency[i]) {
+						check = false;
 						break;
 					}
 
@@ -314,7 +314,7 @@ void nonMaximallySuppression()
 
 int main() 
 {
-	img = imread("untitled.png", CV_LOAD_IMAGE_COLOR);
+	img = imread("test.tif", CV_LOAD_IMAGE_COLOR);
 	if (img.empty())
 		return -1;
 	
