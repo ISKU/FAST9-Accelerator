@@ -312,6 +312,13 @@ void nonMaximallySuppression()
 	}
 }
 
+void fast9()
+{
+	featureDetection(); // stage 1
+	featureScore(); // stage 2
+	nonMaximallySuppression(); // stage 3
+}
+
 int main() 
 {
 	img = imread("test.tif", CV_LOAD_IMAGE_COLOR);
@@ -319,10 +326,7 @@ int main()
 		return -1;
 	
 	convertGrayScale(); // Convert an image to gray scale
-
-	featureDetection(); // stage 1
-	featureScore(); // stage 2
-	nonMaximallySuppression(); // stage 3
+	fast9(); // FAST-9 Algorithm
 
 	imshow("fast9", img);
 	waitKey(0);
