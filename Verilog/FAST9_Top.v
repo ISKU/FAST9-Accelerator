@@ -12,10 +12,10 @@ module FAST9_Top (clock, nReset, outAddr, outPixel);
 	wire [7:0] thres; // 임계값
 	wire [14:0] outAddr; // 최종 코너 주소
 	wire [7:0] outPixel; // 최종 코너 데이터
-	wire [14:0] refScoreAddr;
-	wire [7:0] scoreValue;
-	wire [7:0] scoreData;
-	wire wren;
+	wire [14:0] scoreAddr; // Score Memory 주소
+	wire [7:0] scoreValue; // Score Memory에 저장할 값
+	wire [7:0] scoreData; // Score Memory에서 Read한 값
+	wire wren; // Score Memeory 쓰기 신호
 	
 	// Feature Detection
 	FD_Top fd(
@@ -31,8 +31,6 @@ module FAST9_Top (clock, nReset, outAddr, outPixel);
 	
 	// Feature Score
 	FS_Top fs(
-		.clock(clock), 
-		.nReset(nReset),
 		.isCorner(isCorner),
 		.compare(compare),
 		.refAddr(refAddr),
@@ -40,7 +38,6 @@ module FAST9_Top (clock, nReset, outAddr, outPixel);
 		.adjPixel(adjPixel),
 		.thres(thres),
 		.scoreValue(scoreValue),
-		.refScoreAddr(refScoreAddr),
 		.wren(wren)
 	);
 	
@@ -48,16 +45,17 @@ module FAST9_Top (clock, nReset, outAddr, outPixel);
 	NMS_Top nms(
 		.clock(clock),
 		.nReset(nReset),
-		.refAddr(outAddr),
-		.scoreData(scoreData),
+		.refAddr(refAddr),
 		.refPixel(refPixel),
+		.scoreData(scoreData),
+		.scoreAddr(scoreAddr),
 		.outPixel(outPixel)
 	);
 	
 	// Score Memory
 	FS_ScoreMem scoreMem(
 		.clock(clock),
-		.address(refScoreAddr),
+		.address(scoreAddr),
 		.data(scoreValue),
 		.wren(wren),
 		.q(scoreData)

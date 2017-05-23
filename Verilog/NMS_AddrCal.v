@@ -7,13 +7,14 @@ module NMS_AddrCal (refAddr, adjNumber, scoreAddr);
 	output [14:0] scoreAddr; // Score Memory의 Input 주소
 	
 	assign scoreAddr =
-		(adjNumber == 4'd0) ? refAddr - 181 : // 기준점 
-		(adjNumber == 4'd1) ? refAddr - 181 - `COLUMNS : // 1
-		(adjNumber == 4'd2) ? refAddr - 181 - `COLUMNS + 1 : // 2
-		(adjNumber == 4'd3) ? refAddr - 181 + 1 : // 3
-		(adjNumber == 4'd4) ? refAddr - 181 + `COLUMNS + 1 : // 4
-		(adjNumber == 4'd5) ? refAddr - 181 + `COLUMNS : // 5
-		(adjNumber == 4'd6) ? refAddr - 181 + `COLUMNS - 1 : // 6
-		(adjNumber == 4'd7) ? refAddr - 181 - 1 : // 7
-		(adjNumber == 4'd8) ? refAddr - 181 - `COLUMNS - 1 : 15'bx; // 8
+		(adjNumber == 4'd15) ? refAddr : // 현재 Score Memory Addr
+		(adjNumber == 4'd0) ? refAddr - 182 : // 기준점 
+		(adjNumber == 4'd1) ? refAddr - 182 - `COLUMNS : // 1
+		(adjNumber == 4'd2) ? refAddr - 182 - `COLUMNS + 1 : // 2
+		(adjNumber == 4'd3) ? refAddr - 182 + 1 : // 3
+		(adjNumber == 4'd4) ? refAddr - 182 + `COLUMNS + 1 : // 4
+		(adjNumber == 4'd5) ? refAddr - 182 + `COLUMNS : // 5
+		(adjNumber == 4'd6) ? refAddr - 182 + `COLUMNS - 1 : // 6
+		(adjNumber == 4'd7) ? refAddr - 182 - 1 : // 7
+		(adjNumber == 4'd8) ? refAddr - 182 - `COLUMNS - 1 : 15'bx; // 8
 endmodule 
