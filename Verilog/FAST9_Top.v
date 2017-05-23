@@ -1,6 +1,8 @@
-module FAST9_Top (clock, nReset);
+module FAST9_Top (clock, nReset, outAddr, outPixel);
 	input clock;
 	input nReset;
+	output [14:0] outAddr;
+	output [7:0] outPixel;
 	
 	wire isCorner; // 코너 확인
 	wire [31:0] compare; // DARK, BRIGHT, SIMILAR 값
@@ -8,6 +10,12 @@ module FAST9_Top (clock, nReset);
 	wire [7:0] refPixel; // 기준점 데이터
 	wire [127:0] adjPixel; // 인접한 16개의 점 데이터
 	wire [7:0] thres; // 임계값
+	wire [14:0] outAddr; // 최종 코너 주소
+	wire [7:0] outPixel; // 최종 코너 데이터
+	wire [14:0] refScoreAddr;
+	wire [7:0] scoreValue;
+	wire [7:0] scoreData;
+	wire wren;
 	
 	// Feature Detection
 	FD_Top fd(
@@ -30,6 +38,28 @@ module FAST9_Top (clock, nReset);
 		.refAddr(refAddr),
 		.refPixel(refPixel),
 		.adjPixel(adjPixel),
-		.thres(thres)
+		.thres(thres),
+		.scoreValue(scoreValue),
+		.refScoreAddr(refScoreAddr),
+		.wren(wren)
+	);
+	
+	// Non-Maximal Suppression
+	NMS_Top nms(
+		.clock(clock),
+		.nReset(nReset),
+		.refAddr(outAddr),
+		.scoreData(scoreData),
+		.refPixel(refPixel),
+		.outPixel(outPixel)
+	);
+	
+	// Score Memory
+	FS_ScoreMem scoreMem(
+		.clock(clock),
+		.address(refScoreAddr),
+		.data(scoreValue),
+		.wren(wren),
+		.q(scoreData)
 	);
 endmodule 

@@ -321,7 +321,7 @@ void fast9()
 
 int main() 
 {
-	img = imread("test.tif", CV_LOAD_IMAGE_COLOR);
+	img = imread("untitled.png", CV_LOAD_IMAGE_COLOR);
 	if (img.empty())
 		return -1;
 	

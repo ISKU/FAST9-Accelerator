@@ -2,10 +2,9 @@
 `define DARK 2'b01
 `define BRIGHT 2'b10
 
-module FS_Datapath (isCorner, compare, refAddr, refPixel, adjPixel, thres, wren, scoreValue);
+module FS_Datapath (isCorner, compare, refPixel, adjPixel, thres, wren, scoreValue);
 	input isCorner; // 코너 확인
 	input [31:0] compare; // DARK, BRIGHT, SIMILAR 값
-	input [14:0] refAddr; // 기준점 주소
 	input [7:0] refPixel; // 기준점 데이터
 	input [127:0] adjPixel; // 인접한 16개의 점 데이터
 	input [7:0] thres; // 임계값
