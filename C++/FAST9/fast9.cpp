@@ -172,7 +172,7 @@ void featureScore()
 		feature_candidate[index].score = max; // save feature score
 	}
 
-	/* This below is debug code (Score decision using fomula)
+	/* This below is debug code (Score decision using formula)
 	ofstream outFile("FeatureScore_Output.txt");
 	for (int index = 0; index < feature_candidate.size(); index++) {
 		FEATURE feature = feature_candidate[index];
@@ -194,6 +194,7 @@ void featureScore()
 		<< ", x: " << feature.x 
 		<< ", addr: " << (feature.y * 180 + feature.x) 
 		<< ", score: " << hex << (((setDark > setBright) ? setDark : setBright) & 0xff) << endl;
+		feature_candidate[index].score = (((setDark > setBright) ? setDark : setBright) & 0xff);
 	}
 	outFile.close();
 	*/
@@ -291,10 +292,10 @@ void nonMaximallySuppression()
 	// Set existing features to corner array
 	for (int i = 0; i < feature_candidate.size(); i++)
 		corner[feature_candidate[i].y][feature_candidate[i].x] = feature_candidate[i].score;
-	
+
 	// Non-maximal suppression
-	for (int y = 1; y < img.rows - 1; y++) {
-		for (int x = 1; x < img.cols - 1; x++) {
+	for (int y = 4; y < img.rows - 4; y++) {
+		for (int x = 4; x < img.cols - 4; x++) {
 			if (corner[y][x] != 0) {
 				getAdjacentEightPixels(adjacency, corner, y, x);
 
@@ -310,6 +311,33 @@ void nonMaximallySuppression()
 			}
 		}
 	}
+
+	/* This below is debug code
+	ofstream outFile("NMS_Output.txt");
+	for (int y = 4; y < img.rows - 4; y++) {
+		for (int x = 4; x < img.cols - 4; x++) {
+			if (corner[y][x] != 0) {
+				getAdjacentEightPixels(adjacency, corner, y, x);
+
+				bool check = true;
+				for (int i = 0; i < MAX_ADJACENCY; i++)
+					if (corner[y][x] < adjacency[i]) {
+						check = false;
+						break;
+					}
+
+				if (check) {
+					drawFeature(y, x);
+					outFile << dec 
+					<< "y: " << y 
+					<< ", x: " << x 
+					<< ", addr: " << (y * 180 + x) << endl;
+				}
+			}
+		}
+	}
+	outFile.close();
+	*/
 }
 
 void fast9()
