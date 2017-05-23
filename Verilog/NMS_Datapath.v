@@ -1,7 +1,8 @@
-module NMS_Datapath (refScore, adjScore, refPixel, outPixel);
+module NMS_Datapath (refScore, adjScore, refAddr, outAddr, outPixel);
 	input [7:0] refScore; // 기준점 Score
 	input [63:0] adjScore; // 인접한 8개의 점 Score
-	input [7:0] refPixel; // 기준점 데이터
+	input [14:0] refAddr; // 현재 주소
+	output [14:0] outAddr; // 최종 Corner 주소
 	output [7:0] outPixel; // 최종 Corner 데이터
 
 	// 인접한 8개의 점과 비교하여 기준점의 Score가 모든 인접한 점보다 크면 0xff로 최종 Corner 출력
@@ -14,5 +15,8 @@ module NMS_Datapath (refScore, adjScore, refPixel, outPixel);
 		(refScore < adjScore[31:24]) ? 8'bx :
 		(refScore < adjScore[23:16]) ? 8'bx :
 		(refScore < adjScore[15:8]) ? 8'bx :
-		(refScore < adjScore[7:0]) ? 8'bx : 8'b10100101;
+		(refScore < adjScore[7:0]) ? 8'bx : 8'hff;
+		
+	// 최종적으로 결정된 코너의 주소
+	assign outAddr = (outPixel == 8'hff) ? refAddr - 182 : 15'bx;
 endmodule 

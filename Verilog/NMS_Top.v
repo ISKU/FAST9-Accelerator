@@ -1,10 +1,11 @@
-module NMS_Top (clock, nReset, refAddr, refPixel, scoreData, scoreAddr, outPixel);
+module NMS_Top (clock, nReset, refAddr, refPixel, scoreData, scoreAddr, outAddr, outPixel);
 	input clock;
 	input nReset;
 	input [14:0] refAddr; // 기준점 주소
 	input [7:0] refPixel; // 기준점 데이터
-	input [7:0] scoreData;
+	input [7:0] scoreData; // Score Memory에 저장할 데이터 
 	output [14:0] scoreAddr; // Score Memoery 주소
+	output [14:0] outAddr; // 최종적으로 결정된 코너의 주소
 	output [7:0] outPixel; // 코너 여부를 확인하여 최종적으로 결정된 기준점의 데이터 
 
 	wire [3:0] adjNumber; // 1~8개의 인접한 점 번호
@@ -44,7 +45,8 @@ module NMS_Top (clock, nReset, refAddr, refPixel, scoreData, scoreAddr, outPixel
 	NMS_Datapath datapath(
 		.refScore(refScore),
 		.adjScore(adjScore),
-		.refPixel(refPixel),
+		.refAddr(refAddr),
+		.outAddr(outAddr),
 		.outPixel(outPixel)
 	);
 endmodule 

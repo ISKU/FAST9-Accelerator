@@ -49,6 +49,7 @@ module FAST9_Top (clock, nReset, outAddr, outPixel);
 		.refPixel(refPixel),
 		.scoreData(scoreData),
 		.scoreAddr(scoreAddr),
+		.outAddr(outAddr),
 		.outPixel(outPixel)
 	);
 	

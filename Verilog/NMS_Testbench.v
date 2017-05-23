@@ -7,8 +7,8 @@ module NMS_Testbench;
 	
 	always begin
 		#10 clock = ~clock;
-		if (clock && (outPixel == 8'b10100101))
-			$display("outAddr: %d, outPixel: %b, %h", outAddr, outPixel, outPixel);
+		if (clock && (outPixel == 8'hff)) // 최종적으로 결정된 Corner의 주소와 값 출력
+			$display("outAddr: %d, outPixel: %h", outAddr, outPixel);
 	end
 	
 	// FAST-9 Alogrithm Top Module

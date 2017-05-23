@@ -54,8 +54,8 @@ module FD_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 				
 				if (refAddr == 15'd21056)
 					refAddr = 15'd543;
-				else if (refAddr % 177 == 0)
-					refAddr = refAddr + 7;
+				//else if (refAddr % 177 == 0)
+				//	refAddr = refAddr + 7;
 				else if (refAddr != 0)
 					refAddr = refAddr + 1;
 				else

@@ -23,10 +23,10 @@
 module NMS_Controller (clock, nReset, refAddr, adjNumber, regAddr, readen);
 	input clock;
 	input nReset;
-	input [14:0] refAddr;
-	output [3:0] adjNumber;
-	output [3:0] regAddr;
-	output readen;
+	input [14:0] refAddr; // 현재 주소
+	output [3:0] adjNumber; // 인접한 8개의 점의 번호
+	output [3:0] regAddr; // 레지스터 주소
+	output readen; // datapath에 보낼 읽기 신호
 	
 	reg [3:0] adjNumber; // 8개의 점 Index
 	reg [3:0] regAddr; // 레지스터 주소
