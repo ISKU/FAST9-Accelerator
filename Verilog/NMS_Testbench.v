@@ -14,7 +14,7 @@ module NMS_Testbench;
 	// FAST-9 Alogrithm Top Module
 	FAST9_Top fast9(
 		.clock(clock),
-		.nReset(nReset),
+		.nResetedd(nReset),
 		.outAddr(outAddr),
 		.outPixel(outPixel)
 	);

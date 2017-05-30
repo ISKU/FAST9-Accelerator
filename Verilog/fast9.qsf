@@ -73,3 +73,10 @@ set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id NMS_Testbenc
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME NMS_Testbench -section_id NMS_Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE NMS_Testbench.v -section_id NMS_Testbench
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name VERILOG_FILE Mat_Controller.v
+set_global_assignment -name VERILOG_FILE Mat_AddrCal.v
+set_global_assignment -name VERILOG_FILE Mat_Reg.v
+set_global_assignment -name VERILOG_FILE Mat_Datapath.v
+set_global_assignment -name VERILOG_FILE Mat_Counter.v
+set_global_assignment -name VERILOG_FILE Addr_Reg.v
+set_global_assignment -name VERILOG_FILE DBMEM.v

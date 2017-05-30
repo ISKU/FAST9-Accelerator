@@ -1,4 +1,4 @@
-module NMS_Datapath (refScore, adjScore, refAddr, outAddr, outPixel);
+module NMS_Datapath (refScore, adjScore, refAddr, outAddr, outPixel, out);
 	input [7:0] refScore; // 기준점 Score
 	input [63:0] adjScore; // 인접한 8개의 점 Score
 	input [14:0] refAddr; // 현재 주소
