@@ -6,7 +6,7 @@ module NMS_Top (clock, nReset, refAddr, refPixel, scoreData, scoreAddr, outAddr,
 	input [7:0] scoreData; // Score Memory에 저장할 데이터 
 	output [14:0] scoreAddr; // Score Memoery 주소
 	output [14:0] outAddr; // 최종적으로 결정된 코너의 주소
-	output [7:0] outPixel; // 코너 여부를 확인하여 최종적으로 결정된 기준점의 데이터 
+	output [7:0] outPixel; // 코너 여부를 확인하여 최종적으로 결정된 기준점의 데이터
 
 	wire [3:0] adjNumber; // 1~8개의 인접한 점 번호
 	wire [3:0] regAddr; // 레지스터 주소

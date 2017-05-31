@@ -4,7 +4,7 @@
 module Mat_AddrCal (refAddr, adjNumber, FBAddr);
 	input [14:0] refAddr; // 기준점
 	input [2:0] adjNumber; // 인접한 8개의 점 번호
-	output [14:0] FBAddr; // Score Memory의 Input 주소
+	output [14:0] FBAddr; // Frame Buffer의 Input 주소
 	
 	assign FBAddr =
 		(adjNumber == 4'd0) ? refAddr - `COLUMNS : // 1

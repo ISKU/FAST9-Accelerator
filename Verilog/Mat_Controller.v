@@ -14,12 +14,11 @@
 module Mat_Controller (clock, nReset, refAddr, adjNumber, regAddr, matReaden);
 	input clock;
 	input nReset;
-	output [14:0] refAddr;
-	output [2:0] adjNumber;
-	output [2:0] regAddr;
+	input [14:0] refAddr; // 기준점
+	output [2:0] adjNumber; // 인접한 점 번호
+	output [2:0] regAddr; // 레지스터 주소
 	output matReaden;
 	
-	reg [14:0] refAddr; // 기준점 주소
 	reg [2:0] adjNumber; // 8개의 점 Index
 	reg [2:0] regAddr; // 레지스터 주소
 	reg matReaden; // Datapath가 수행될 수 있도록 하는 enable 신호
@@ -35,20 +34,15 @@ module Mat_Controller (clock, nReset, refAddr, adjNumber, regAddr, matReaden);
 	end
 	
 	// FSM
-	always @(curState) begin
+	always @(curState or refAddr) begin
 		casex (curState)
 			`INIT: begin
-				nextState = `S0;
+				if (refAddr)
+					nextState = `S0;
+					
 				adjNumber = 3'bx;
 				regAddr = 3'bx;
 				matReaden = 1'b0;
-				
-				if (refAddr == 15'd21600)
-					refAddr = 0;
-				else if (refAddr != 0)
-					refAddr = refAddr + 1;
-				else
-					refAddr = 15'b0;
 			end
 		
 			`S0: begin

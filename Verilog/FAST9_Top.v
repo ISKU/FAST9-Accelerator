@@ -1,7 +1,7 @@
-module FAST9_Top (clock, nReset, outAddr, outPixel);
+module FAST9_Top (clock, nReset, refAddr, outPixel);
 	input clock;
 	input nReset;
-	output [14:0] outAddr;
+	output [14:0] refAddr;
 	output [7:0] outPixel;
 	
 	wire isCorner; // 코너 확인

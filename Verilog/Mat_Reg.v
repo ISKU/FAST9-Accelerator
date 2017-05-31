@@ -20,6 +20,7 @@ module Mat_Reg (clock, nReset, matReaden, regAddr, FBData, adjFBPixel);
 		(regAddr == 4'd6) ? 9'd64 :
 		(regAddr == 4'd7) ? 9'd128 : 8'bx;
 	
+	// 레지스터 저장
 	always @ (posedge clock or negedge nReset)
 		if (!nReset)
 			r1 <= 8'bx;
