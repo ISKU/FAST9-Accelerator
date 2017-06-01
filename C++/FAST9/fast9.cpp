@@ -151,7 +151,7 @@ void featureScore()
 {
 	unsigned char candidate[MAX_CANDIDATE];
 	unsigned char compare[MAX_CANDIDATE];
-
+	
 	for (int index = 0; index < feature_candidate.size(); index++) {
 		FEATURE feature = feature_candidate[index];
 		getAdjacentSixteenPixels(candidate, feature.y, feature.x);
@@ -171,7 +171,7 @@ void featureScore()
 
 		feature_candidate[index].score = max; // save feature score
 	}
-
+	
 	/* This below is debug code (Score decision using formula)
 	ofstream outFile("FeatureScore_Output.txt");
 	for (int index = 0; index < feature_candidate.size(); index++) {
@@ -340,11 +340,58 @@ void nonMaximallySuppression()
 	*/
 }
 
+void NMSforSAD()
+{
+	unsigned char corner[MAX_ROWS][MAX_COLS] = {{0}};
+	unsigned char adjacency[MAX_ADJACENCY];
+
+	for (int i = 0; i < feature_candidate.size(); i++)
+		corner[feature_candidate[i].y][feature_candidate[i].x] = feature_candidate[i].score;
+
+	int number = 1;
+	ofstream outFile("SAD_Output.txt");
+	for (int y = 4; y < img.rows - 4; y++) {
+		for (int x = 4; x < img.cols - 4; x++) {
+			if (corner[y][x] != 0) {
+				getAdjacentEightPixels(adjacency, corner, y, x);
+
+				bool check = true;
+				for (int i = 0; i < MAX_ADJACENCY; i++)
+					if (corner[y][x] < adjacency[i]) {
+						check = false;
+						break;
+					}
+
+				if (check) {
+					int avg = 
+						(img.at<Vec3b>(y - 1, x)[BLUE] +
+						img.at<Vec3b>(y - 1, x + 1)[BLUE] +
+						img.at<Vec3b>(y, x + 1)[BLUE] +
+						img.at<Vec3b>(y + 1, x + 1)[BLUE] +
+						img.at<Vec3b>(y + 1, x)[BLUE] +
+						img.at<Vec3b>(y + 1, x - 1)[BLUE] +
+						img.at<Vec3b>(y, x - 1)[BLUE] +
+						img.at<Vec3b>(y - 1, x - 1)[BLUE]) / 8;
+					
+					outFile << dec 
+					<< number++ 
+					<< "   y: " << y 
+					<< ", x: " << x 
+					<< ", addr: " << (y * 180 + x)
+					<< ", avg: " << avg << endl;
+				}
+			}
+		}
+	}
+	outFile.close();
+}
+
 void fast9()
 {
 	featureDetection(); // stage 1
 	featureScore(); // stage 2
 	nonMaximallySuppression(); // stage 3
+	//NMSforSAD();
 }
 
 int main() 
