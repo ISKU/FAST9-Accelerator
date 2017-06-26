@@ -26,6 +26,10 @@ Example
 
 ![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/camera.png)
 ![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/camera-fast9.png)
+<br>
+
+> :bulb: I applied the FAST9 algorithm to this project. <br>
+> :bulb: [Autonomous-Drone-Design](https://github.com/ISKU/Autonomous-Drone-Design)
 
 Author
 ----------
