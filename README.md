@@ -19,7 +19,7 @@ Description
 Diagram
 ----------
 ![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/BlockDiagram/Feature_Detection.png)
-![Alt Text](hhttps://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/BlockDiagram/Feature_Score.png)
+![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/BlockDiagram/Feature_Score.png)
 ![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/BlockDiagram/Non-Maximal_Supression.png)
 <br>
 
