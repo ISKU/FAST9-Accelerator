@@ -16,6 +16,13 @@ Description
 > One pixel operates for about 20 clocks to detect corners. <br>
 > The FAST-9 algorithm 3 stage was designed as a pipeline. <br>
 
+Diagram
+----------
+![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/BlockDiagram/Feature_Detection.png)
+![Alt Text](hhttps://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/BlockDiagram/Feature_Score.png)
+![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/BlockDiagram/Non-Maximal_Supression.png)
+<br>
+
 Example
 ----------
 ![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/h.png)
