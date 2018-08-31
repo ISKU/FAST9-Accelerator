@@ -1,9 +1,5 @@
 # FAST-9 Accelerator
-FAST-9 Algorithm for Corner Detection (OpenCV, C++, Verilog)
-
-Description
-----------
-**FAST-9 Corner Detectors in C++, Verilog**
+FAST-9 Algorithm for Corner Detection
 
 - Software
 
@@ -16,7 +12,7 @@ Description
 > One pixel operates for about 20 clocks to detect corners. <br>
 > The FAST-9 algorithm 3 stage was designed as a pipeline. <br>
 
-Diagram
+Design
 ----------
 ![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/BlockDiagram/Feature_Detection.png)
 ![Alt Text](https://github.com/ISKU/FAST9-Accelerator/blob/master/Sample/BlockDiagram/Feature_Score.png)
@@ -40,4 +36,4 @@ Example
 Author
 ----------
 > - Minho Kim ([ISKU](https://github.com/ISKU))
-> - **E-mail:** minho1a@hanmail.net
+> - **E-mail:** minho.kim093@gmail.com
