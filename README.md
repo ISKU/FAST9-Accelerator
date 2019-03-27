@@ -35,5 +35,5 @@ Example
 
 Author
 ----------
-> - Minho Kim ([ISKU](https://github.com/ISKU))
-> - **E-mail:** minho.kim093@gmail.com
+- Minho Kim ([ISKU](https://github.com/ISKU))
+- **E-mail:** minho.kim093@gmail.com
